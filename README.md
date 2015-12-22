@@ -5,6 +5,12 @@ Generates html/eml stuff for your newsletters from generic html (with images in 
 
 ## Examples
 
+Show inline help:
+
+`bundle exec bin/html2mail help`
+`bundle exec bin/html2mail send --help`
+
+
 Convert html with images to .eml
 
 `bundle exec bin/html2mail convert /path/to/newsletter.html`
@@ -21,7 +27,7 @@ Save "premailed" HTML files (convert css to inline styles):
 
 Send test emails and use stored config for SMTP server:
 
-`bundle exec bin/html2mail send /path/to/newsletters/*.html --to your@domain.com --domain=example.com --user=user@example.com --password=princess1 `
+`bundle exec bin/html2mail send /path/to/newsletters/*.html --to your@domain.com --domain=example.com --user=user@example.com --password=princess1 --subj='Test mail'`
 
 Init SMTP config:
 
