@@ -1,0 +1,119 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "html2mail"
+require 'gli'
+
+include GLI::App
+
+
+program_desc 'Convert html file with images to e-mail'
+
+# flag [:t, :sendtest], default_value: true
+# flag [:f, :file], default_value: nil
+
+# pre do |global_options, command, options, args|
+#   # $todo_list = Hacer::Todolist.new(global_options[:tasklist])
+# end
+
+
+flag [:domain], default_value: nil
+flag [:user], default_value: nil
+flag [:password], default_value: nil
+switch [:starttls], default_value: true
+
+config_file '.html2mail.yml'
+
+pre do |global, command, options, args|
+  Mailer2.delivery_method = :smtp
+  Mailer2.smtp_settings = {:address => global[:domain],
+                           :user_name => global[:user],
+                           :password => global[:password],
+                           :enable_starttls_auto => global[:starttls]}
+end
+
+desc 'Sent email from html to given adress'
+arg 'files', multiple: true, desc: "HTML-files to process"
+command :send do |c|
+  c.flag [:t, :to], default_value: nil
+  c.flag [:s, :subj], default_value: nil
+
+  c.action do |global_options, options, args|
+    # STDERR.puts args
+    args.each do |f|
+      STDERR.puts "Start mail processing"
+
+      m= Mailer2.mail2 f, options[:to], options[:subj]
+      m.deliver_now
+
+      STDERR.puts "Done"
+    end
+  end
+end
+
+
+desc 'Convert HTML file with images to eml'
+arg 'files', multiple: true, desc: "HTML-files to process"
+command :convert do |c|
+  c.switch [:s, :stdout], default_value: false
+  c.flag [:o, :output], default_value: nil
+
+  c.action do |global_options, options, args|
+    # STDERR.puts "Processing: #{args}"
+    args.each do |f|
+      m = Mailer2.mail2 f, options[:to], options[:subj]
+
+      html = m.to_s.html_safe
+
+      if options[:stdout]
+        STDOUT.puts html
+      else
+        if options[:output].present?
+          out = options[:output]
+        else
+          out = File.join(File.dirname(f), File.basename(f, File.extname(f)) + '.eml')
+        end
+
+        STDERR.puts "out: #{out}"
+        # raise "File already exists: #{out}" if File.exists?(out)
+        File.open(out, 'w') { |fw| fw.write(html) }
+      end
+    end
+    STDERR.puts "Done"
+  end
+end
+
+desc 'Convert HTML with premailer to more mail software compatible (converts css to style attributes)'
+arg 'files', multiple: true, desc: "HTML-files to process"
+command :prepare do |c|
+  c.switch [:s, :stdout], default_value: false
+  c.flag [:o, :output], default_value: nil
+
+  c.action do |global_options, options, args|
+    # STDERR.puts "Processing: #{args}"
+    args.each do |f|
+      if f.end_with?('_premailer.html')
+        STDERR.puts "Skip already premailed html: #{File.basename(f)}"
+      else
+        html = Premailer.new(f, :warn_level => Premailer::Warnings::SAFE).to_inline_css.html_safe
+
+        if options[:stdout]
+          STDOUT.puts html
+        else
+          if options[:output].present?
+            out = options[:output]
+          else
+            out = File.join(File.dirname(f), File.basename(f, File.extname(f)) + '_premailer.html')
+          end
+
+          STDERR.puts "#{File.basename(f)} --> #{File.basename(out)}"
+          # raise "File already exists: #{out}" if File.exists?(out)
+          File.open(out, 'w') { |fw| fw.write(html) }
+        end
+      end
+    end
+    STDERR.puts "Done"
+  end
+end
+
+exit run(ARGV)
