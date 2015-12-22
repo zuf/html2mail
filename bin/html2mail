@@ -88,31 +88,34 @@ arg 'files', multiple: true, desc: "HTML-files to process"
 command :prepare do |c|
   c.switch [:s, :stdout], default_value: false
   c.flag [:o, :output], default_value: nil
+  c.flag [:premailer_prefix], default_value: 'premailed_'
+  c.flag [:premailer_suffix], default_value: ''
+  c.flag [:premailer_dir], default_value: 'premailed'
 
   c.action do |global_options, options, args|
-    # STDERR.puts "Processing: #{args}"
+    STDERR.puts "Processing: #{args.join(', ')}"
     args.each do |f|
-      if f.end_with?('_premailed.html')
-        STDERR.puts "Skip already premailed html: #{File.basename(f)}"
+      # if f.end_with?(options[:premailer_suffix])
+      #   STDERR.puts "Skip already premailed html: #{File.basename(f)}"
+      # else
+      html = Premailer.new(f, :warn_level => Premailer::Warnings::SAFE).to_inline_css.html_safe
+
+      if options[:stdout]
+        STDOUT.puts html
       else
-        html = Premailer.new(f, :warn_level => Premailer::Warnings::SAFE).to_inline_css.html_safe
-
-        if options[:stdout]
-          STDOUT.puts html
+        if options[:output].present?
+          out = options[:output]
         else
-          if options[:output].present?
-            out = options[:output]
-          else
-            premailed_dir = File.join(File.dirname(f), 'premailed')
-            FileUtils.mkdir_p(premailed_dir)
-            out = File.join(premailed_dir, File.basename(f, File.extname(f)) + '_premailed.html')
-          end
-
-          STDERR.puts "#{File.basename(f)} --> #{File.basename(out)}"
-          # raise "File already exists: #{out}" if File.exists?(out)
-          File.open(out, 'w') { |fw| fw.write(html) }
+          premailed_dir = File.join(File.dirname(f), options[:premailer_dir])
+          FileUtils.mkdir_p(premailed_dir)
+          out = File.join(premailed_dir, options[:premailer_prefix] + File.basename(f, File.extname(f)) + options[:premailer_suffix] +File.extname(f))
         end
+
+        STDERR.puts "#{File.basename(f)} --> #{File.join options[:premailer_dir], File.basename(out)}"
+        # raise "File already exists: #{out}" if File.exists?(out)
+        File.open(out, 'w') { |fw| fw.write(html) }
       end
+      # end
     end
     STDERR.puts "Done"
   end
