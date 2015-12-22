@@ -44,6 +44,7 @@ Send test emails and use stored config for SMTP server:
 
  * ActionMailer
  * premailer
+ * nokogiri
  * GLI
 
 
