@@ -1,4 +1,4 @@
-# Html2mail
+# html2mail
 
 Generates html/eml stuff for your newsletters from generic html (with images in separate files).
 
