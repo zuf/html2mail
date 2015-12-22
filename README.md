@@ -19,11 +19,17 @@ Save "premailed" HTML files (convert css to inline styles):
 `bundle exec bin/html2mail prepare /path/to/*.html`
 
 
+Send test emails and use stored config for SMTP server:
+
+`bundle exec bin/html2mail send /path/to/newsletters/*.html --to your@domain.com --domain=example.com --user=user@example.com --password=princess1 `
+
 Init SMTP config:
+
+> WARNING: Password stores as plain text in config file `.html2mail.yml` file in $HOME for Linux
 
 `bundle exec bin/html2mail --domain=example.com --user=user@example.com --password=princess1 initconfig`
 
-Send test emails:
+Send test emails and use stored config for SMTP server:
 
 `bundle exec bin/html2mail send /path/to/newsletters/*.html --to your@domain.com`
 

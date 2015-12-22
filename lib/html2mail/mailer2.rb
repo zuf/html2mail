@@ -8,7 +8,7 @@ class Mailer2 < ActionMailer::Base
     Premailer.new(html_file, :warn_level => Premailer::Warnings::SAFE).to_inline_css
   end
 
-  def mail2(html_file, email, subject)
+  def mail2(html_file, email, subject, from=nil)
     premailer = Premailer.new(html_file, :warn_level => Premailer::Warnings::SAFE)
     # STDOUT.puts premailer.to_inline_css
     doc = Nokogiri::HTML(premailer.to_inline_css)
@@ -27,7 +27,9 @@ class Mailer2 < ActionMailer::Base
 
     html = doc.to_s.html_safe
 
-    m = mail from: 'robot@mediacrat.com', to: email, subject: subject do |format|
+    from ||= email
+
+    m = mail from: from, to: email, subject: subject do |format|
       format.text { render plain: premailer.to_plain_text }
       format.html { render html: html }
     end

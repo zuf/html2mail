@@ -43,7 +43,7 @@ command :send do |c|
     args.each do |f|
       STDERR.puts "Start mail processing"
 
-      m= Mailer2.mail2 f, options[:to], options[:subj]
+      m= Mailer2.mail2 f, options[:to], options[:subj], global_options[:user]
       m.deliver_now
 
       STDERR.puts "Done"
@@ -61,7 +61,7 @@ command :convert do |c|
   c.action do |global_options, options, args|
     # STDERR.puts "Processing: #{args}"
     args.each do |f|
-      m = Mailer2.mail2 f, options[:to], options[:subj]
+      m = Mailer2.mail2 f, options[:to], options[:subj], global_options[:user]
 
       html = m.to_s.html_safe
 
