@@ -92,7 +92,7 @@ command :prepare do |c|
   c.action do |global_options, options, args|
     # STDERR.puts "Processing: #{args}"
     args.each do |f|
-      if f.end_with?('_premailer.html')
+      if f.end_with?('_premailed.html')
         STDERR.puts "Skip already premailed html: #{File.basename(f)}"
       else
         html = Premailer.new(f, :warn_level => Premailer::Warnings::SAFE).to_inline_css.html_safe
@@ -103,7 +103,9 @@ command :prepare do |c|
           if options[:output].present?
             out = options[:output]
           else
-            out = File.join(File.dirname(f), File.basename(f, File.extname(f)) + '_premailer.html')
+            premailed_dir = File.join(File.dirname(f), 'premailed')
+            FileUtils.mkdir_p(premailed_dir)
+            out = File.join(premailed_dir, File.basename(f, File.extname(f)) + '_premailed.html')
           end
 
           STDERR.puts "#{File.basename(f)} --> #{File.basename(out)}"
