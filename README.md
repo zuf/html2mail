@@ -25,7 +25,7 @@ Send test emails and use stored config for SMTP server:
 
 Init SMTP config:
 
-> WARNING: Password stores as plain text in config file `.html2mail.yml` file in $HOME for Linux
+> WARNING: Password stored as plain text in config file `.html2mail.yml` file in $HOME for Linux
 
 `bundle exec bin/html2mail --domain=example.com --user=user@example.com --password=princess1 initconfig`
 
