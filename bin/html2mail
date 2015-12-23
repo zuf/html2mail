@@ -6,17 +6,7 @@ require 'gli'
 
 include GLI::App
 
-
 program_desc 'Convert html file with images to e-mail'
-
-# flag [:t, :sendtest], default_value: true
-# flag [:f, :file], default_value: nil
-
-# pre do |global_options, command, options, args|
-#   # $todo_list = Hacer::Todolist.new(global_options[:tasklist])
-# end
-
-
 version Html2mail::VERSION
 
 flag [:domain], default_value: nil
@@ -41,7 +31,6 @@ command :send do |c|
   c.flag [:s, :subj], default_value: nil
 
   c.action do |global_options, options, args|
-    # STDERR.puts args
     args.each do |f|
       STDERR.puts "Start mail processing"
 
@@ -61,7 +50,6 @@ command :convert do |c|
   c.flag [:o, :output], default_value: nil
 
   c.action do |global_options, options, args|
-    # STDERR.puts "Processing: #{args}"
     args.each do |f|
       m = Mailer2.mail2 f, options[:to], options[:subj], global_options[:user]
 
@@ -76,7 +64,7 @@ command :convert do |c|
           out = File.join(File.dirname(f), File.basename(f, File.extname(f)) + '.eml')
         end
 
-        STDERR.puts "out: #{out}"
+        STDERR.puts "Out: #{out}"
         # raise "File already exists: #{out}" if File.exists?(out)
         File.open(out, 'w') { |fw| fw.write(html) }
       end
@@ -97,9 +85,6 @@ command :prepare do |c|
   c.action do |global_options, options, args|
     STDERR.puts "Processing: #{args.join(', ')}"
     args.each do |f|
-      # if f.end_with?(options[:premailer_suffix])
-      #   STDERR.puts "Skip already premailed html: #{File.basename(f)}"
-      # else
       html = Premailer.new(f, :warn_level => Premailer::Warnings::SAFE).to_inline_css.html_safe
 
       if options[:stdout]
@@ -110,14 +95,13 @@ command :prepare do |c|
         else
           premailed_dir = File.join(File.dirname(f), options[:premailer_dir])
           FileUtils.mkdir_p(premailed_dir)
-          out = File.join(premailed_dir, options[:premailer_prefix] + File.basename(f, File.extname(f)) + options[:premailer_suffix] +File.extname(f))
+          out = File.join(premailed_dir, options[:premailer_prefix] + File.basename(f, File.extname(f)) + options[:premailer_suffix] + File.extname(f))
         end
 
         STDERR.puts "#{File.basename(f)} --> #{File.join options[:premailer_dir], File.basename(out)}"
         # raise "File already exists: #{out}" if File.exists?(out)
         File.open(out, 'w') { |fw| fw.write(html) }
       end
-      # end
     end
     STDERR.puts "Done"
   end
