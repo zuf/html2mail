@@ -7,7 +7,7 @@ class Html2mailTest < Minitest::Test
 
   def test_it_should_convert_files_to_eml
     %w{rm test/files/*.eml}
-    %x{bundle exec bin/html2mail convert test/files/*.html}
+    %x{bundle exec bin/html2mail convert test/files/*.html 2>&1 > /dev/null}
 
     Dir.glob('test/files/*.html').each do |f|
       eml = File.join(File.dirname(f), File.basename(f, File.extname(f)) + '.eml')
@@ -23,7 +23,7 @@ class Html2mailTest < Minitest::Test
 
   def test_it_should_prepare_files
     %w{rm -rf test/files/premailed}
-    %x{bundle exec bin/html2mail prepare test/files/*.html}
+    %x{bundle exec bin/html2mail prepare test/files/*.html 2>&1 > /dev/null}
 
     Dir.glob('test/files/premailed/*.html').each do |f|
       assert File.exist?(f)
