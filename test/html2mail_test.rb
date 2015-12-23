@@ -62,4 +62,12 @@ class Html2mailTest < Minitest::Test
   def test_it_should_test_mailer2
     skip
   end
+
+  def test_it_should_convert_local_images_to_attachments
+    skip
+  end
+
+  def test_it_should_leave_remote_image_urls
+    skip
+  end
 end
