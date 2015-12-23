@@ -17,6 +17,8 @@ program_desc 'Convert html file with images to e-mail'
 # end
 
 
+version Html2mail::VERSION
+
 flag [:domain], default_value: nil
 flag [:user], default_value: nil
 flag [:password], default_value: nil
