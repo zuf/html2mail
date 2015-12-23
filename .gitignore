@@ -7,6 +7,6 @@
 /pkg/
 /spec/reports/
 /tmp/
-
-test/files/premailed/
-test/files/*.eml
+/test/files/premailed/
+/test/files/*.eml
+/coverage
