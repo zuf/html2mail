@@ -1,6 +1,6 @@
 # html2mail
 
-Generates html/eml stuff for your newsletters from generic html (with images in separate files).
+Console tool which generates html/eml stuff for your newsletters from html-files (support images in separate files)
 
 
 ## Examples
