@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["e.vakhromtsev@gmail.com"]
 
   spec.summary       = %q{html to mail converter}
-  spec.description   = %q{Generates html/eml stuff for your newsletters from generic html (with images in separate files)}
+  spec.description   = %q{Console tool which generates html/eml stuff for your newsletters from html-files (support images in separate files)}
   spec.homepage      = "https://github.com/zuf/html2mail"
   spec.license       = "MIT"
 
