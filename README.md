@@ -3,6 +3,9 @@
 Console tool which generates html/eml stuff for your newsletters from html-files (support images in separate files)
 
 
+[![Gem Version](https://badge.fury.io/rb/html2mail.svg)](https://badge.fury.io/rb/html2mail)
+
+
 ## Examples
 
 Show inline help:
