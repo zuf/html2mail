@@ -107,4 +107,45 @@ command :prepare do |c|
   end
 end
 
+
+desc 'Send html-letter(s) to recipients'
+arg 'files', multiple: true, desc: "HTML-files to process"
+command :bulksend do |c|
+  c.flag [:csv_email_column], default_value: 'email', desc: 'Colum name in csv with email addresses'
+  c.flag [:l, :list], default_value: nil, required: true, desc: "File with recipents (.txt - one email per line; .csv - with column named 'email')"
+  c.switch [:r, :shuffle], default_value: true, desc: "Send emails to recipients in random order"
+  c.flag [:t, :timeout], default_value: 1.0, type: Float, desc: "Wait given seconds between sending mails"
+  c.flag [:s, :subj], default_value: nil, desc: "Subject for mail. If blank then use <title> tag or html-file name"
+  # c.flag [:p, :pretend], default_value: nil, desc: "Run but do not make any real actions"
+
+  c.action do |global_options, options, args|
+    file_type = File.extname(options[:list]).gsub('.', '').strip.downcase
+
+    case file_type
+      when 'csv'
+        raise 'not implemented yet'
+      else
+        # STDERR.puts
+        lines = File.readlines(options[:list])
+        lines = lines.reject { |x| x.strip.blank? }
+        lines = lines.shuffle if options[:shuffle]
+        lines_count = lines.size
+        File.readlines(options[:list]).each_with_index do |line, index|
+          email = line.strip
+          if email.present?
+            args.each do |f|
+              Mailer2.mail2(f, email, options[:subj], global_options[:user]).deliver_now
+              # STDERR.print '.'
+              STDERR.puts "(#{index+1}/#{lines_count}) Email '#{File.basename(f)}' sent to #{email}"
+
+              sleep(options[:timeout]) if options[:timeout].present?
+            end
+          end
+        end
+    end
+
+    STDERR.puts "Done"
+  end
+end
+
 exit run(ARGV)
