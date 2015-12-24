@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   #   raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
   # end
 
+  spec.required_ruby_version = '>= 1.9.1'
+
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "bin"
   spec.executables   = "html2mail" #spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
