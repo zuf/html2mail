@@ -27,17 +27,24 @@ Save "premailed" HTML files (convert css to inline styles):
 
 Send test emails and use stored config for SMTP server:
 
-`html2mail send /path/to/newsletters/*.html --to your@domain.com --domain=example.com --user=user@example.com --password=princess1 --subj='Test mail'`
+`html2mail --smtp_address=mail.example.com --smtp_user_name=newsletter@example.com --smtp_password=princess1 send /path/to/newsletters/*.html --to your@domain.com --subj='Test mail'`
+
 
 Init SMTP config:
 
 > WARNING: Password stored as plain text in config file `.html2mail.yml` file in $HOME for Linux
 
-`html2mail --domain=example.com --user=user@example.com --password=princess1 initconfig`
+`html2mail --smtp_address=mail.example.com --smtp_user_name=newsletter@example.com --smtp_password=princess1 initconfig`
+
 
 Send test emails and use stored config for SMTP server:
 
 `html2mail send /path/to/newsletters/*.html --to your@domain.com`
+
+
+Send newsletter.html to all adresses from list.txt:
+
+`html2mail bulksend -l list.txt newsletter.html`
 
 
 ## Based on gems
