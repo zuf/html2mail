@@ -9,19 +9,19 @@ include GLI::App
 program_desc 'Convert html file with images to e-mail'
 version Html2mail::VERSION
 
-flag [:domain], default_value: nil
-flag [:user], default_value: nil
-flag [:password], default_value: nil
-switch [:starttls], default_value: true
+flag [:smtp_address], default_value: nil, desc: "SMTP server address"
+flag [:smtp_user_name], default_value: nil, desc: "SMTP server user name (email address)"
+flag [:smtp_password], default_value: nil, desc: "SMTP server user password"
+switch [:smtp_starttls], default_value: true, desc: "Enables SMTP/TLS (STARTTLS)"
 
 config_file '.html2mail.yml'
 
 pre do |global, command, options, args|
   Mailer2.delivery_method = :smtp
-  Mailer2.smtp_settings = {:address => global[:domain],
-                           :user_name => global[:user],
-                           :password => global[:password],
-                           :enable_starttls_auto => global[:starttls]}
+  Mailer2.smtp_settings = {:address => global[:smtp_address],
+                           :user_name => global[:smtp_user_name],
+                           :password => global[:smtp_password],
+                           :enable_starttls_auto => global[:smtp_starttls]}
 end
 
 desc 'Sent email from html to given adress'
