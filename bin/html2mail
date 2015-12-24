@@ -129,6 +129,8 @@ command :bulksend do |c|
         total_count = rows.size
         email_column = options[:csv_email_column].to_sym
 
+        STDERR.puts "Warning: shuffle option not yer implemented for CSV" if options[:shuffle]
+
         rows.each_with_index do |row, index|
           args.each do |f|
             email = row[email_column]
@@ -143,7 +145,7 @@ command :bulksend do |c|
         lines = lines.reject { |x| x.strip.blank? }
         lines = lines.shuffle if options[:shuffle]
         total_count = lines.size
-        File.readlines(options[:list]).each_with_index do |line, index|
+        lines.each_with_index do |line, index|
           email = line.strip
           if email.present?
             args.each do |f|
