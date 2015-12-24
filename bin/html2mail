@@ -111,7 +111,7 @@ end
 desc 'Send html-letter(s) to recipients'
 arg 'files', multiple: true, desc: "HTML-files to process"
 command :bulksend do |c|
-  c.flag [:csv_email_column], default_value: 'email', desc: 'Colum name in csv with email addresses'
+  c.flag [:csv_email_column], default_value: 'email', type: String, desc: 'Colum name in csv with email addresses'
   c.flag [:l, :list], default_value: nil, required: true, desc: "File with recipents (.txt - one email per line; .csv - with column named 'email')"
   c.switch [:r, :shuffle], default_value: true, desc: "Send emails to recipients in random order"
   c.flag [:t, :timeout], default_value: 1.0, type: Float, desc: "Wait given seconds between sending mails"
@@ -123,20 +123,33 @@ command :bulksend do |c|
 
     case file_type
       when 'csv'
-        raise 'not implemented yet'
+        require 'csv'
+
+        rows = CSV.table(options[:list], skip_blanks: true)
+        total_count = rows.size
+        email_column = options[:csv_email_column].to_sym
+
+        rows.each_with_index do |row, index|
+          args.each do |f|
+            email = row[email_column]
+            Mailer2.mail2(f, email, options[:subj], global_options[:user]).deliver_now
+            STDERR.puts "(#{index+1}/#{total_count}) Email '#{File.basename(f)}' sent to #{email}"
+            sleep(options[:timeout]) if options[:timeout].present?
+          end
+        end
       else
         # STDERR.puts
         lines = File.readlines(options[:list])
         lines = lines.reject { |x| x.strip.blank? }
         lines = lines.shuffle if options[:shuffle]
-        lines_count = lines.size
+        total_count = lines.size
         File.readlines(options[:list]).each_with_index do |line, index|
           email = line.strip
           if email.present?
             args.each do |f|
               Mailer2.mail2(f, email, options[:subj], global_options[:user]).deliver_now
               # STDERR.print '.'
-              STDERR.puts "(#{index+1}/#{lines_count}) Email '#{File.basename(f)}' sent to #{email}"
+              STDERR.puts "(#{index+1}/#{total_count}) Email '#{File.basename(f)}' sent to #{email}"
 
               sleep(options[:timeout]) if options[:timeout].present?
             end

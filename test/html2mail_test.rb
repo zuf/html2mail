@@ -51,6 +51,11 @@ class Html2mailTest < Minitest::Test
     skip
   end
 
+  def test_it_should_bulksend_emails
+    skip
+  end
+
+
   def test_it_should_show_help
     skip
   end
