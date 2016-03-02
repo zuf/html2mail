@@ -3,7 +3,7 @@ require "action_mailer/base"
 require 'premailer'
 
 class Mailer2 < ActionMailer::Base
-  def mail2(html_file, email, subject, from=nil)
+  def mail2(html_file, email, subject, from)
     premailer = Premailer.new(html_file, :warn_level => Premailer::Warnings::SAFE)
     doc = Nokogiri::HTML(premailer.to_inline_css)
 
@@ -23,7 +23,7 @@ class Mailer2 < ActionMailer::Base
 
     html = doc.to_s.html_safe
 
-    from ||= email
+    # from ||= email
 
     mail from: from, to: email, subject: subject do |format|
       format.text { render plain: premailer.to_plain_text }

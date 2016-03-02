@@ -28,13 +28,14 @@ desc 'Sent email from html to given adress'
 arg 'files', multiple: true, desc: "HTML-files to process"
 command :send do |c|
   c.flag [:t, :to], default_value: nil
+  c.flag [:f, :from], default_value: Mailer2.smtp_settings[:user_name]
   c.flag [:s, :subj], default_value: nil
 
   c.action do |global_options, options, args|
     args.each do |f|
       STDERR.puts "Start mail processing"
 
-      m= Mailer2.mail2 f, options[:to], options[:subj], global_options[:user]
+      m= Mailer2.mail2 f, options[:to], options[:subj], options[:from] || global_options[:smtp_user_name]
       m.deliver_now
 
       STDERR.puts "Done"
@@ -51,7 +52,7 @@ command :convert do |c|
 
   c.action do |global_options, options, args|
     args.each do |f|
-      m = Mailer2.mail2 f, options[:to], options[:subj], global_options[:user]
+      m = Mailer2.mail2 f, options[:to], options[:subj], options[:from] || global_options[:smtp_user_name]
 
       html = m.to_s.html_safe
 
@@ -117,6 +118,7 @@ command :bulksend do |c|
   c.flag [:t, :timeout], default_value: 1.0, type: Float, desc: "Wait given seconds between sending mails"
   c.flag [:s, :subj], default_value: nil, desc: "Subject for mail. If blank then use <title> tag or html-file name"
   # c.flag [:p, :pretend], default_value: nil, desc: "Run but do not make any real actions"
+  c.flag [:f, :from], default_value: Mailer2.smtp_settings[:user_name]
 
   c.action do |global_options, options, args|
     file_type = File.extname(options[:list]).gsub('.', '').strip.downcase
@@ -134,7 +136,7 @@ command :bulksend do |c|
         rows.each_with_index do |row, index|
           args.each do |f|
             email = row[email_column]
-            Mailer2.mail2(f, email, options[:subj], global_options[:user]).deliver_now
+            Mailer2.mail2(f, email, options[:subj], options[:from] || global_options[:smtp_user_name]).deliver_now
             STDERR.puts "(#{index+1}/#{total_count}) Email '#{File.basename(f)}' sent to #{email}"
             sleep(options[:timeout]) if options[:timeout].present?
           end
@@ -149,7 +151,7 @@ command :bulksend do |c|
           email = line.strip
           if email.present?
             args.each do |f|
-              Mailer2.mail2(f, email, options[:subj], global_options[:user]).deliver_now
+              Mailer2.mail2(f, email, options[:subj], options[:from] || global_options[:smtp_user_name]).deliver_now
               # STDERR.print '.'
               STDERR.puts "(#{index+1}/#{total_count}) Email '#{File.basename(f)}' sent to #{email}"
 
