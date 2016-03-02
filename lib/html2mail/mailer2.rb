@@ -11,7 +11,7 @@ class Mailer2 < ActionMailer::Base
       path = img['src']
       filesystem_path = File.expand_path(path, File.dirname(html_file))
       if File.readable?(filesystem_path)
-        STDERR.puts "Process img: #{path}"
+        # STDERR.puts "Process img: #{path}"
         attachments.inline[File.basename(path)] = File.read(filesystem_path)
         img['src'] = attachments.inline[File.basename(path)].url
       end
