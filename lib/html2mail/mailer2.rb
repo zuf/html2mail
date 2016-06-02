@@ -21,7 +21,7 @@ class Mailer2 < ActionMailer::Base
     subject ||= head_title.text if head_title.present?
     subject ||= File.basename(html_file, File.extname(html_file))
 
-    html = doc.to_s.html_safe
+    html = doc.to_s.gsub('[%%FEmail%%]', email).html_safe
 
     # from ||= email
 
