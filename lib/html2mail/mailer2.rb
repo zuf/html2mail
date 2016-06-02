@@ -4,7 +4,9 @@ require 'premailer'
 
 class Mailer2 < ActionMailer::Base
   def mail2(html_file, email, subject, from)
-    premailer = Premailer.new(html_file, :warn_level => Premailer::Warnings::SAFE)
+    html_string = File.read(html_file).gsub('[%%FEmail%%]', email)
+    
+    premailer = Premailer.new(html_string, :warn_level => Premailer::Warnings::SAFE)
     doc = Nokogiri::HTML(premailer.to_inline_css)
 
     doc.css('img').each do |img|
@@ -21,7 +23,7 @@ class Mailer2 < ActionMailer::Base
     subject ||= head_title.text if head_title.present?
     subject ||= File.basename(html_file, File.extname(html_file))
 
-    html = doc.to_s.gsub('[%%FEmail%%]', email).html_safe
+    html = doc.to_s.html_safe
 
     # from ||= email
 
