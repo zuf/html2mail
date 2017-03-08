@@ -47,6 +47,7 @@ end
 desc 'Convert HTML file with images to eml'
 arg 'files', multiple: true, desc: "HTML-files to process"
 command :convert do |c|
+  c.flag [:t, :to], default_value: ''
   c.switch [:s, :stdout], default_value: false
   c.flag [:o, :output], default_value: nil
 
